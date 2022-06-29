@@ -48,9 +48,10 @@ public class Model extends Observable {
      *  0 <= COL < size(). Returns null if there is no tile there.
      *  Used for testing. Should be deprecated and removed.
      *  */
+    //column is ｜，row is ——
     public Tile tile(int col, int row) {
         return board.tile(col, row);
-    }
+    }//useful to return to a specific element
 
     /** Return the number of squares on one side of the board.
      *  Used for testing. Should be deprecated and removed. */
@@ -138,6 +139,13 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for(int i = 0; i < 4; i++){ //4 <-> b.size()
+            for(int j = 0; j < 4; j++){
+                if(b.tile(i,j) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +156,13 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                if(b.tile(i,j) != null && b.tile(i,j).value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
