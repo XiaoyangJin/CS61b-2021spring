@@ -174,6 +174,91 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        //emptySpaceExists
+        for(int i = 0; i < 4; i++){ //4 <-> b.size()
+            for(int j = 0; j < 4; j++){
+                if(Model.emptySpaceExists(b)){
+                    return true;
+                    //b.tile(i,j) != null &&
+                }
+            }
+        }
+
+        //test left or right
+//        for(int j = 0; j < 4; j++){ //4 <-> b.size()
+//            for(int i = 1; i < 2; i++){
+//                if(b.tile(i,j) == null){
+//                    continue;
+//                } else if(b.tile(i,j).value() == b.tile(i-1,j).value() || b.tile(i,j).value() == b.tile(i+1,j).value()){
+//                    return true;
+//                }
+//            }
+//        }
+
+        //test up or down
+//        for(int i = 0; i < 4; i++){ //4 <-> b.size()
+//            for(int j = 1; j < 2; j++){
+//                if(b.tile(i,j) == null){
+//                    continue;
+//                } else if(b.tile(i,j).value() == b.tile(i,j-1).value() || b.tile(i,j).value() == b.tile(i,j+1).value()){
+//                    return true;
+//                }
+//            }
+//        }
+
+        //any direction
+//        for(int j = 1; j < 2; j++){ //4 <-> b.size()
+//            for(int i = 1; i < 2; i++){
+//                if(b.tile(i,j) == null || b.tile(i+1,j) == null || b.tile(i-1,j) == null
+//                || b.tile(i,j+1) == null || b.tile(i,j-1) == null
+//                || b.tile(i-1,j-1) == null
+//                || b.tile(i+1,j-1) == null
+//                || b.tile(i-1,j+1) == null
+//                || b.tile(i+1,j+1) == null
+//                ){
+//                    continue;
+//                } else if((b.tile(i,j).value() == b.tile(i-1,j).value() && b.tile(i,j).value()  == b.tile(i,j-1).value())
+//                || (b.tile(i,j).value() == b.tile(i+1,j).value() && b.tile(i,j).value()  == b.tile(i,j-1).value())
+//                || (b.tile(i,j).value() == b.tile(i+1,j).value() && b.tile(i,j).value()  == b.tile(i,j+1).value())
+//                || (b.tile(i,j).value() == b.tile(i-1,j).value() && b.tile(i,j).value()  == b.tile(i,j+1).value())
+//                || (b.tile(i-1,j-1).value() == b.tile(i-1,j).value() && b.tile(i-1,j-1).value()  == b.tile(i,j-1).value())
+//                || (b.tile(i-1,j+1).value() == b.tile(i-1,j).value() && b.tile(i-1,j+1).value()  == b.tile(i,j+1).value())
+//                || (b.tile(i+1,j-1).value() == b.tile(i+1,j).value() && b.tile(i+1,j-1).value()  == b.tile(i,j-1).value())
+//                || (b.tile(i+1,j+1).value() == b.tile(i+1,j).value() && b.tile(i+1,j-1).value()  == b.tile(i,j+1).value())){
+//                    return true;
+//                }
+//            }
+//        }
+
+        for(int i = 0; i < 4; i++){ //4 <-> b.size()
+            for(int j = 0; j < 4; j++){
+                if(b.tile(i,j) != null && i == 3 && j == 3){
+                    continue;
+                }
+
+                if(j==3){
+                    if(b.tile(i,j).value() == b.tile(i+1,j).value()){
+                        return true;
+                    }
+                    continue;
+                }
+
+                if(i==3){
+                    if(b.tile(i,j).value() == b.tile(i,j+1).value()){
+                        return true;
+                    }
+                    continue;
+                }
+
+                if(b.tile(i,j) != null && i != 3 && j != 3){
+                    if(b.tile(i,j).value() == b.tile(i+1,j).value()){
+                        return true;
+                    } else if(b.tile(i,j).value() == b.tile(i,j+1).value()){
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
