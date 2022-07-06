@@ -67,24 +67,4 @@ public enum Side {
      *  start of this class. */
     private int row0, col0, drow, dcol;
 
-    /** Parameters describing this Side, as documented in the comment at the
-     *  start of this class. */
-    //private int _row0, _col0, _drow, _dcol;
-
-    /** Returns original Column.*/
-    int originalCol() {
-        return col0;
-    }
-    /**Returns original Row.*/
-    int originalRow() {
-        return row0;
-    }
-    /**Returns column delta.*/
-    int originaldCol() {
-        return dcol;
-    }
-    /**Returns row delta.*/
-    int originaldRow() {
-        return drow;
-    }
 };
