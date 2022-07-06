@@ -1,7 +1,9 @@
 package game2048;
 
 import java.util.Formatter;
+import java.util.HashSet;
 import java.util.Observable;
+import java.util.Set;
 
 
 /** The state of a game of 2048.
@@ -115,11 +117,137 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+//        for(int i = 0; i < board.size(); i++){
+//            for(int j = 0; j < board.size(); j++){
+//                Tile t= board.tile(i,j);
+//                if(board.tile(i,j) != null){
+//                    board.move(i,3,t);//move everything up
+//                    changed = true;
+//                    score += 7;
+//                }
+//            }
+//        }
+
+        //move up only
+        //can move up if the space above it is empty, or it can move up one if the space above it has the same value as itself
+        //when iterating over rows, it is safe to iterate starting from row 3 down
+
+//        board.setViewingPerspective(side);
+//        int size = board.size();
+//        for (int c = 0; c < size; c++) {
+//            HashSet<Integer> mergedRows = new HashSet();
+//            for (int r = size - 1; r >= 0; r--) {
+//                Tile currentTile = board.tile(c, r);
+//                if (currentTile == null) {
+//                    continue;
+//                }
+//                int distanceToTop = size - r;
+//                int moveToRow = size - 1;
+//                for (int i = 1; i < distanceToTop; i++) {
+//                    if (board.tile(c, r+i) != null) {
+//                        if (currentTile.value() == board.tile(c, r+i).value() && !mergedRows.contains(r+i)) {
+//                            mergedRows.add(r+i);
+//                            moveToRow = r+i;
+//                        }
+//                        else moveToRow = r + i - 1;
+//                    } else if (r == size - 2) {
+//                        moveToRow = size - 1;
+//                    }
+//                }
+//                if (moveToRow != r) {
+//                    if (board.tile(c, moveToRow) != null) {
+//                        score += 2 * currentTile.value();
+//                    }
+//                    board.move(c, moveToRow, currentTile);
+//                    changed = true;
+//                }
+//            }
+//        }
+
+
+        Set<Tile> changedTiles = new HashSet<>();
+        board.setViewingPerspective(side);
+        for (int row = board.size() - 2; row >= 0; row--) {
+            for (int col = 0; col < board.size(); col++) {
+                Tile tile = board.tile(col, row);
+                if (tile == null) {
+                    continue;
+                }
+                VTile vTile = new VTile(new Coordinate(col, row), tile);
+                boolean isChangedAfterMove = moveTileUp(vTile, changedTiles);
+                if (isChangedAfterMove) {
+                    changed = true;
+                }
+            }
+        }
+        board.setViewingPerspective(Side.NORTH);
+
+        // for the tilt to the Side SIDE. If the board changed, set the
+        // changed local variable to true.
+
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+    //new code for 2021 edition
+    private boolean moveTileUp(VTile vTile, Set<Tile> changedTiles) {
+        int targetRow;
+        VTile nearest = findNearestTileAbove(vTile);
+        if (nearest == null) {
+            targetRow = board.size() - 1;
+        } else if (vTile.actualTile.value() == nearest.actualTile.value() && !changedTiles.contains(nearest.actualTile)) {
+            targetRow = nearest.row;
+        } else if (nearest.row == vTile.row + 1) {
+            return false;
+        } else {
+            targetRow = nearest.row - 1;
+        }
+        boolean isMerged = board.move(vTile.col, targetRow, vTile.actualTile);
+        if (isMerged) {
+            score += vTile.actualTile.next().value();
+            changedTiles.add(board.tile(vTile.col, targetRow));
+        }
+        return true;
+    }
+
+    private VTile findNearestTileAbove(VTile vTile) {
+        for (int row = vTile.row + 1; row < board.size(); row++) {
+            Tile actualTile = board.tile(vTile.col, row);
+            if (actualTile != null) {
+                return new VTile(new Coordinate(vTile.col, row), actualTile);
+            }
+        }
+        return null;
+    }
+
+    private static class VTile {
+        int col;
+        int row;
+        Tile actualTile;
+        public VTile(Coordinate c, Tile t) {
+            col = c.col;
+            row = c.row;
+            actualTile = t;
+        }
+    }
+
+    private static class Coordinate {
+        int col;
+        int row;
+        public Coordinate(int c, int r) {
+            col = c;
+            row = r;
+        }
+        public static Coordinate[] of(int[][] values) {
+            Coordinate[] coordinates = new Coordinate[values.length];
+            for (int i = 0; i < values.length; i++) {
+                int[] coordinate = values[i];
+                coordinates[i] = new Coordinate(coordinate[0], coordinate[1]);
+            }
+            return coordinates;
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
@@ -201,30 +329,6 @@ public class Model extends Observable {
 //                if(b.tile(i,j) == null){
 //                    continue;
 //                } else if(b.tile(i,j).value() == b.tile(i,j-1).value() || b.tile(i,j).value() == b.tile(i,j+1).value()){
-//                    return true;
-//                }
-//            }
-//        }
-
-        //any direction
-//        for(int j = 1; j < 2; j++){ //4 <-> b.size()
-//            for(int i = 1; i < 2; i++){
-//                if(b.tile(i,j) == null || b.tile(i+1,j) == null || b.tile(i-1,j) == null
-//                || b.tile(i,j+1) == null || b.tile(i,j-1) == null
-//                || b.tile(i-1,j-1) == null
-//                || b.tile(i+1,j-1) == null
-//                || b.tile(i-1,j+1) == null
-//                || b.tile(i+1,j+1) == null
-//                ){
-//                    continue;
-//                } else if((b.tile(i,j).value() == b.tile(i-1,j).value() && b.tile(i,j).value()  == b.tile(i,j-1).value())
-//                || (b.tile(i,j).value() == b.tile(i+1,j).value() && b.tile(i,j).value()  == b.tile(i,j-1).value())
-//                || (b.tile(i,j).value() == b.tile(i+1,j).value() && b.tile(i,j).value()  == b.tile(i,j+1).value())
-//                || (b.tile(i,j).value() == b.tile(i-1,j).value() && b.tile(i,j).value()  == b.tile(i,j+1).value())
-//                || (b.tile(i-1,j-1).value() == b.tile(i-1,j).value() && b.tile(i-1,j-1).value()  == b.tile(i,j-1).value())
-//                || (b.tile(i-1,j+1).value() == b.tile(i-1,j).value() && b.tile(i-1,j+1).value()  == b.tile(i,j+1).value())
-//                || (b.tile(i+1,j-1).value() == b.tile(i+1,j).value() && b.tile(i+1,j-1).value()  == b.tile(i,j-1).value())
-//                || (b.tile(i+1,j+1).value() == b.tile(i+1,j).value() && b.tile(i+1,j-1).value()  == b.tile(i,j+1).value())){
 //                    return true;
 //                }
 //            }
